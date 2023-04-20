@@ -2,34 +2,12 @@ import { z } from 'zod';
 
 export const formDataSchema = z.object({
   email: z.string().email(),
-  firstName: z
-    .string()
-    .nonempty()
-    .refine(
-      (value) => {
-        // Custom validation logic for the firstName field
-        return value.length >= 2;
-      },
-      {
-        message: 'First name must be at least 2 characters long',
-      },
-    ),
-  lastName: z
-    .string()
-    .nonempty()
-    .refine(
-      (value) => {
-        // Custom validation logic for the lastName field
-        return value.length >= 2;
-      },
-      {
-        message: 'Last name must be at least 2 characters long',
-      },
-    ),
+  firstName: z.string().nonempty({ message: 'First name cannot be empty' }),
+  lastName: z.string().nonempty({ message: 'Last name cannot be empty' }),
   address: z.object({
-    addressLine1: z.string().nonempty(),
-    city: z.string().nonempty(),
+    addressLine1: z.string().nonempty({ message: 'Address Cannot be empty' }),
+    city: z.string().nonempty({ message: 'City Cannot be empty' }),
     country: z.string().nonempty(),
-    postalCode: z.string().nonempty(),
+    postalCode: z.string().nonempty({ message: 'Postal Code Cannot be empty' }),
   }),
 });

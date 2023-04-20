@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
-import { selectUser } from '../../store/userSlice';
+import { selectUser, signUpAsync } from '../../store/userSlice';
 import { set as setNestedProperty } from 'lodash';
 import countryList from 'react-select-country-list'
 import PhoneInput from 'react-phone-input-2'
@@ -34,12 +34,21 @@ const Signup = () => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
+
+    let finalValue = value;
+    if (name === "address.country") {
+      const selectedCountry = countryOptions.find((country) => country.label === value);
+      if (selectedCountry) {
+        finalValue = selectedCountry.value;
+      }
+    }
+
     // Update the form data using Lodash's set function.
     setFormData((prevState) => {
       const newFormData = { ...prevState };
 
       // handle the deep update of nested properties in form data
-      setNestedProperty(newFormData, name, value);
+      setNestedProperty(newFormData, name, finalValue);
 
       return newFormData;
     });
@@ -56,58 +65,66 @@ const Signup = () => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    validateFormInput()
+    const isUserinputValid = validateFormInput()
+    if (isUserinputValid) {
+      console.log("USER_INPUT", formData)
+      dispatch(signUpAsync(formData));
+    }
   };
 
   const validateFormInput = () => {
     const validationResult = formDataSchema.safeParse(formData);
-
     if (validationResult.success) {
-      console.log(validationResult.data);
+      return true
     } else {
       const errorMap = validationResult.error.formErrors.fieldErrors;
       setFormErrors(errorMap);
+      return false
     }
   };
-
-
-  // const displayErrorMessage = (field: string) => {
-
-
-  //   const errorMessage = formErrors[field];
-  //   if (errorMessage) {
-  //     return (
-  //       <p className="text-xs text-red-500 mt-1">{errorMessage[1]}</p>
-  //     );
-  //   }
-  // };
 
   const displayErrorMessage = (field: string) => {
 
-    console.log(field)
-    console.log(formErrors[field])
-
     const errorMessage = formErrors[field];
     if (errorMessage) {
-      // If the field is within the address object, use dot notation to access it
-      if (formErrors[field] === "address") {
+      if (formErrors[field] !== "address") {
         return (
-          <p className="text-xs text-red-500 mt-1">{errorMessage[0]}</p>
-        );
-      }
-
-      else {
-        return (
-          <p className="text-xs text-red-500 mt-1">{errorMessage[1]}</p>
+          <p className="text-xs text-red-500 mt-1">
+            {errorMessage && errorMessage[0]}
+          </p>
         );
       }
     }
+
+    // If the field is within the address object, handle the errors here
+    if (field === "address.addressLine1") {
+      return (
+        <p className="text-xs text-red-500 mt-1">
+          {formErrors.address && formErrors.address[0]}
+        </p>
+      );
+    }
+
+    if (field === "address.city") {
+      return (
+        <p className="text-xs text-red-500 mt-1">
+          {formErrors.address && formErrors.address[1]}
+        </p>
+      );
+    }
+
+    if (field === "address.postalCode") {
+      return (
+        <p className="text-xs text-red-500 mt-1">
+          {formErrors.address && formErrors.address[2]}
+        </p>
+      );
+    }
+
   };
 
-
-
   const displayCountryOptions = countryOptions.map((country, index) => (
-    <option key={index} value={country.label}>{country.label}</option>
+    <option key={index} value={country.value}>{country.label}</option>
   ));
 
   return (
@@ -208,7 +225,7 @@ const Signup = () => {
                   value={formData.address.addressLine1}
                   onChange={handleChange}
                 />
-                {displayErrorMessage('address')}
+                {displayErrorMessage('address.addressLine1')}
               </div>
               <div className="flex-1">
                 <label htmlFor="city" className="block text-sm font-medium leading-6 text-gray-900">
@@ -224,7 +241,7 @@ const Signup = () => {
                   value={formData.address.city}
                   onChange={handleChange}
                 />
-                {displayErrorMessage('address')}
+                {displayErrorMessage('address.city')}
               </div>
             </div>
             <div className="flex gap-2 mt-2">
@@ -257,7 +274,7 @@ const Signup = () => {
                   value={formData.address.postalCode}
                   onChange={handleChange}
                 />
-                {displayErrorMessage('address')}
+                {displayErrorMessage('address.postalCode')}
               </div>
             </div>
             <div>

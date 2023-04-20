@@ -282,6 +282,13 @@
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
+"@types/redux-thunk@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@types/redux-thunk/-/redux-thunk-2.1.0.tgz#bc2b6e972961831afb82a9bf4f06726e351f9416"
+  integrity sha512-8M+kcrnZQYO3A40d8a1lieBFur/ab8EXHqa2dGMQqsmBaVCbNp3gd8ed/HuSjLoLA63ov/trXaXWlkiKVF4VUw==
+  dependencies:
+    redux-thunk "*"
+
 "@types/scheduler@*":
   version "0.16.3"
   resolved "https://registry.npmjs.org/@types/scheduler/-/scheduler-0.16.3.tgz"
@@ -2161,7 +2168,7 @@ readdirp@~3.6.0:
   dependencies:
     picomatch "^2.2.1"
 
-redux-thunk@^2.4.2:
+redux-thunk@*, redux-thunk@^2.4.2:
   version "2.4.2"
   resolved "https://registry.npmjs.org/redux-thunk/-/redux-thunk-2.4.2.tgz"
   integrity sha512-+P3TjtnP0k/FEjcBL5FZpoovtvrTNT/UXd4/sluaSyrURlSlhLSzEdfsTBW7WsKB6yPvgd7q/iZPICFjW4o57Q==

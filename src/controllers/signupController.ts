@@ -79,6 +79,7 @@ export default async function signupController(
 
   switch (method) {
     case 'POST':
+      console.log('Request BODY', req.body);
       const result = await createUserOnStriga(req.body);
       res.send(result);
       break;

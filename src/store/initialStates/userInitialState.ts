@@ -5,6 +5,16 @@ const userInitialState: UserState = {
   email: '',
   firstName: '',
   lastName: '',
+  mobile: {
+    countryCode: '',
+    number: '',
+  },
+  address: {
+    addressLine1: '',
+    city: '',
+    country: '',
+    postalCode: '',
+  },
 };
 
 export default userInitialState;
