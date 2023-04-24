@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const formDataSchema = z.object({
+export const signupFormSchema = z.object({
   email: z.string().email(),
   firstName: z.string().nonempty({ message: 'First name cannot be empty' }),
   lastName: z.string().nonempty({ message: 'Last name cannot be empty' }),

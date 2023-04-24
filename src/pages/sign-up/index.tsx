@@ -5,15 +5,16 @@ import { set as setNestedProperty } from 'lodash';
 import countryList from 'react-select-country-list'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
-import { formDataSchema } from '@/schemas/formSchema';
+import { signupFormSchema } from '@/schemas/signupFormSchema';
+import { useRouter } from 'next/router';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 interface PhoneInputData {
   dialCode: string;
 }
 
-const Signup = () => {
+const Index = () => {
   const countryOptions = useMemo(() => countryList().getData(), [])
-  const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: '',
@@ -31,24 +32,17 @@ const Signup = () => {
     },
   });
   const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const router = useRouter();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
-
-    let finalValue = value;
-    if (name === "address.country") {
-      const selectedCountry = countryOptions.find((country) => country.label === value);
-      if (selectedCountry) {
-        finalValue = selectedCountry.value;
-      }
-    }
 
     // Update the form data using Lodash's set function.
     setFormData((prevState) => {
       const newFormData = { ...prevState };
 
       // handle the deep update of nested properties in form data
-      setNestedProperty(newFormData, name, finalValue);
+      setNestedProperty(newFormData, name, value);
 
       return newFormData;
     });
@@ -63,17 +57,28 @@ const Signup = () => {
     });
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const isUserinputValid = validateFormInput()
     if (isUserinputValid) {
       console.log("USER_INPUT", formData)
-      dispatch(signUpAsync(formData));
+      try {
+        const resultAction = await dispatch(signUpAsync(formData));
+        unwrapResult(resultAction); // Throws an error if the action was rejected
+
+        // Redirect the user to the desired page upon successful signup
+        router.push('/home-dashboard');
+      } catch (error) {
+        console.error('Failed to sign up:', error);
+      }
+      // if (signUpAsync.fulfilled.match(resultAction)) {
+      //   router.push('/homeDashboard');
+      // }
     }
   };
 
   const validateFormInput = () => {
-    const validationResult = formDataSchema.safeParse(formData);
+    const validationResult = signupFormSchema.safeParse(formData);
     if (validationResult.success) {
       return true
     } else {
@@ -98,6 +103,7 @@ const Signup = () => {
 
     // If the field is within the address object, handle the errors here
     if (field === "address.addressLine1") {
+      console.log(formErrors.address)
       return (
         <p className="text-xs text-red-500 mt-1">
           {formErrors.address && formErrors.address[0]}
@@ -225,7 +231,7 @@ const Signup = () => {
                   value={formData.address.addressLine1}
                   onChange={handleChange}
                 />
-                {displayErrorMessage('address.addressLine1')}
+                {/* {displayErrorMessage('address.addressLine1')} */}
               </div>
               <div className="flex-1">
                 <label htmlFor="city" className="block text-sm font-medium leading-6 text-gray-900">
@@ -292,4 +298,4 @@ const Signup = () => {
   )
 }
 
-export default Signup
+export default Index

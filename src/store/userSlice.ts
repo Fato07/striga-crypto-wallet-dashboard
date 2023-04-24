@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
-import { UserStateSchema } from '../schemas/userSchema';
 import { UserState } from '@/types/userTypes';
 import userInitialState from './initialStates/userInitialState';
 import axios from 'axios';
@@ -23,12 +22,6 @@ export const userSlice = createSlice({
   name: 'user',
   initialState: userInitialState,
   reducers: {
-    signUp: (state, action: PayloadAction<UserState>) => {
-      state.isLoggedIn = true;
-      state.email = action.payload.email;
-      state.firstName = action.payload.firstName;
-      state.lastName = action.payload.lastName;
-    },
     logOut: (state) => {
       state.isLoggedIn = false;
       state.email = '';
@@ -42,7 +35,7 @@ export const userSlice = createSlice({
         signUpAsync.fulfilled,
         (state, action: PayloadAction<UserState>) => {
           // Update the state with the signed up user information
-          return { ...state, ...action.payload };
+          return { ...state, ...action.payload, isLoggedIn: true };
         },
       )
       .addCase(signUpAsync.rejected, (state, action) => {
@@ -52,6 +45,6 @@ export const userSlice = createSlice({
   },
 });
 
-export const { signUp, logOut } = userSlice.actions;
+export const { logOut } = userSlice.actions;
 export const selectUser = (state: RootState) => state.user;
 export default userSlice.reducer;

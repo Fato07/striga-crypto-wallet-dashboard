@@ -2,18 +2,18 @@ import { UserState } from '@/types/userTypes';
 
 const userInitialState: UserState = {
   isLoggedIn: false,
-  email: '',
-  firstName: '',
-  lastName: '',
+  email: 'fathindos.fd@gmail.com',
+  firstName: 'Fathin',
+  lastName: 'Dosunmu',
   mobile: {
-    countryCode: '',
-    number: '',
+    countryCode: '+372',
+    number: '53653094',
   },
   address: {
-    addressLine1: '',
-    city: '',
-    country: '',
-    postalCode: '',
+    addressLine1: 'Pärnu mnt 33',
+    city: 'Tallinn',
+    country: 'Estonia',
+    postalCode: '12611',
   },
 };
 
