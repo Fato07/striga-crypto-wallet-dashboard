@@ -2,6 +2,7 @@ import { UserState } from '@/types/userTypes';
 
 const userInitialState: UserState = {
   isLoggedIn: false,
+  userId: '',
   email: 'fathindos.fd@gmail.com',
   firstName: 'Fathin',
   lastName: 'Dosunmu',
@@ -15,6 +16,25 @@ const userInitialState: UserState = {
     country: 'Estonia',
     postalCode: '12611',
   },
+  KYC: {
+    emailVerified: false,
+    mobileVerified: false,
+    status: '',
+  },
+  emailVerification: {
+    dateExpires: '',
+  },
+  mobileVerification: {
+    dateExpires: '',
+  },
+  createdAt: 0,
+  expectedIncomingTxVolumeYearly: '',
+  expectedOutgoingTxVolumeYearly: '',
+  occupation: '',
+  placeOfBirth: '',
+  purposeOfAccount: '',
+  selfPepDeclaration: false,
+  sourceOfFunds: '',
 };
 
 export default userInitialState;

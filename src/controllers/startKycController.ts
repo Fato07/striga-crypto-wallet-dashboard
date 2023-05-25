@@ -28,7 +28,7 @@ const updateUser = async (data: any) => {
   try {
     const response = await axios(config);
 
-    if (response.status === 201) {
+    if (response.status === 200) {
       // User Updated successfully
       return {
         success: true,
@@ -36,9 +36,7 @@ const updateUser = async (data: any) => {
         message: `User ${response.data.userId} Updated successfully`,
       };
     }
-    console.log(response.data);
   } catch (error: any) {
-    console.error(error.response.data);
     return {
       success: false,
       error: error.response.data,
@@ -89,6 +87,53 @@ const startKyc = async (data: any) => {
   }
 };
 
+const simulateKyc = async (data: any) => {
+  const { userId } = data;
+
+  const obj = {
+    userId: userId,
+    status: 'APPROVED',
+  };
+  4;
+  const options: signatureOptions = {
+    verb: 'PATCH',
+    path: '/simulate/user/kyc',
+    data: obj,
+  };
+
+  const signature = generateSignature(options);
+
+  const config = {
+    method: 'patch',
+    url: 'https://www.sandbox.striga.com/api/v1/simulate/user/kyc',
+    headers: {
+      'Content-Type': 'application/json',
+      'api-key': process.env.STRIGA_API_KEY,
+      Authorization: signature,
+    },
+    data: JSON.stringify(obj),
+  };
+
+  try {
+    const response = await axios(config);
+    if (response.status === 200) {
+      // User created successfully
+      console.log(response);
+      return {
+        success: true,
+        data: response.data,
+        message: 'KYC Done',
+      };
+    }
+  } catch (error: any) {
+    console.error(error.response.data.errorDetails);
+    return {
+      success: false,
+      error: error.response.data,
+    };
+  }
+};
+
 export default async function startKycController(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -97,10 +142,8 @@ export default async function startKycController(
 
   switch (method) {
     case 'POST':
-      console.log('Request BODY', req.body);
-      const res2 = await updateUser(req.body);
-      const result = await startKyc(req.body);
-      res.send(res2);
+      const result = await simulateKyc(req.body);
+      res.send(result);
       break;
     default:
       res.setHeader('Allow', ['POST']);

@@ -28,6 +28,34 @@ export const userSlice = createSlice({
       state.firstName = '';
       state.lastName = '';
     },
+    updateUser: (state, action) => {
+      const { payload } = action;
+      state.userId = payload.userId;
+      state.email = payload.email;
+      state.firstName = payload.firstName;
+      state.lastName = payload.lastName;
+      state.mobile.countryCode = payload.mobile.countryCode;
+      state.mobile.number = payload.mobile.number;
+      state.address.addressLine1 = payload.address.addressLine1;
+      state.address.city = payload.address.city;
+      state.address.country = payload.address.country;
+      state.address.postalCode = payload.address.postalCode;
+      state.KYC.emailVerified = payload.KYC.emailVerified;
+      state.KYC.mobileVerified = payload.KYC.mobileVerified;
+      state.KYC.status = payload.KYC.status;
+      state.createdAt = payload.createdAt;
+      state.expectedIncomingTxVolumeYearly =
+        payload.expectedIncomingTxVolumeYearly;
+      state.expectedOutgoingTxVolumeYearly =
+        payload.expectedOutgoingTxVolumeYearly;
+      state.occupation = payload.occupation;
+      state.placeOfBirth = payload.placeOfBirth;
+      state.purposeOfAccount = payload.purposeOfAccount;
+      state.selfPepDeclaration = payload.selfPepDeclaration;
+      state.sourceOfFunds = payload.sourceOfFunds;
+
+      // return { ...state, ...action.payload };
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -45,6 +73,6 @@ export const userSlice = createSlice({
   },
 });
 
-export const { logOut } = userSlice.actions;
+export const { logOut, updateUser } = userSlice.actions;
 export const selectUser = (state: RootState) => state.user;
 export default userSlice.reducer;

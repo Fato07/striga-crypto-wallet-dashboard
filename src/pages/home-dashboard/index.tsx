@@ -1,17 +1,20 @@
 import React, { useState, useMemo, useEffect } from 'react'
-import countryList from 'react-select-country-list'
 import axios from 'axios';
 import { occupationOptions, purposeOfAccountOptions, sourceOfFundsOptions, txVolumeYearlyOptions } from '../../../utility/fieldOptions';
 import PersonalInfo from '@/components/Forms/PersonalInfo';
 import countries from 'i18n-iso-countries';
 import 'i18n-iso-countries/langs/en.json';
 import { kycFormSchema } from '@/schemas/kycFormSchema';
+import { selectUser, updateUser } from '@/store/userSlice';
+import { useSelector, useDispatch } from 'react-redux';
 
 countries.registerLocale(require('i18n-iso-countries/langs/en.json')); // register the English language data
 
 const Index = () => {
- // const countryOptions = useMemo(() => countryList().getData(), [])
  const countryList = useMemo(() => countries.getNames('en'), []);
+
+ const user = useSelector(selectUser);
+ const dispatch = useDispatch();
 
  const [formData, setFormData] = useState({
   occupation: '',
@@ -63,12 +66,12 @@ const Index = () => {
  const validateForm = () => {
   const validationResult = kycFormSchema.safeParse(formData);
   if (validationResult.success) {
-   return true
+   setFormErrors({}); // Clear form errors when the form is valid
+   return true;
   } else {
    const errorMap = validationResult.error.formErrors.fieldErrors;
-   console.log(errorMap)
    setFormErrors(errorMap);
-   return false
+   return false;
   }
  };
 
@@ -88,26 +91,29 @@ const Index = () => {
 
   const submittedData = {
    ...formData,
+   userId: "7b035cb7-bb3d-4347-a335-c431935446ac",
    placeOfBirth: countries.alpha2ToAlpha3(formData.placeOfBirth),
   };
 
-
-  console.log(formData)
-
   if (validateForm()) {
    try {
+    axios.post('/api/startKyc', submittedData).then((res) => {
 
+     const { success, data, message } = res.data
+     // Dispatch updateUser action with the response data
+     if (success) {
+      console.log(message);
+      dispatch(updateUser(data));
+     }
+    })
    } catch (error) {
-
    }
   }
-
-
  };
 
  const getIp = async () => {
   try {
-   const response = await axios.get('/api/IpAddress');;
+   const response = await axios.get('/api/IpAddress');
    setFormData((prevFormData) => ({
     ...prevFormData,
     ipAddress: response.data.ip,

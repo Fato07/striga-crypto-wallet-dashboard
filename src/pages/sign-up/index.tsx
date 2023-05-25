@@ -5,9 +5,9 @@ import { set as setNestedProperty } from 'lodash';
 import countryList from 'react-select-country-list'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
-import { signupFormSchema } from '@/schemas/signupFormSchema';
 import { useRouter } from 'next/router';
 import { unwrapResult } from '@reduxjs/toolkit';
+import { signupFormSchema } from '../../schemas/signupFormSchema';
 
 interface PhoneInputData {
   dialCode: string;
@@ -64,16 +64,15 @@ const Index = () => {
       console.log("USER_INPUT", formData)
       try {
         const resultAction = await dispatch(signUpAsync(formData));
-        unwrapResult(resultAction); // Throws an error if the action was rejected
+
+        // Throws an error if the action was rejected
+        unwrapResult(resultAction);
 
         // Redirect the user to the desired page upon successful signup
-        router.push('/home-dashboard');
+        router.push('/dash-board');
       } catch (error) {
         console.error('Failed to sign up:', error);
       }
-      // if (signUpAsync.fulfilled.match(resultAction)) {
-      //   router.push('/homeDashboard');
-      // }
     }
   };
 
@@ -89,7 +88,6 @@ const Index = () => {
   };
 
   const displayErrorMessage = (field: string) => {
-
     const errorMessage = formErrors[field];
     if (errorMessage) {
       if (formErrors[field] !== "address") {

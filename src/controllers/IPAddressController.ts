@@ -21,6 +21,7 @@ export default async function IPAddressController(
     case 'GET':
       const result = await getIpAddress();
       res.status(200).json(result);
+      break;
     default:
       res.setHeader('Allow', ['GET']);
       res.status(405).end(`Method ${method} Not Allowed`);
